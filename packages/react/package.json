@@ -1,0 +1,16 @@
+{
+  "name": "@verso/react",
+  "private": true,
+  "version": "0.0.1",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+  },
+  "dependencies": {
+    "@verso/core": "0.0.1"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  }
+}

@@ -1,0 +1,15 @@
+import { Canvas, Circle, Text } from '@verso/core';
+import { VersoCanvas } from '@verso/react';
+
+import { hexToBuffer } from '../util/data.js';
+
+import font from '../assets/Apercu Light.otf?raw-hex';
+
+<VersoCanvas fonts={[
+  { name: 'Apercu', data: hexToBuffer(font) },
+]}>
+  <Canvas width={500} height={500} density={2}>
+    <Circle cx={250} cy={250} r={100} style={{ fill: 'blue' }} />
+    <Text x={200} y={200} fontFamily="Apercu" fontSize={40} style={{ fill: 'white' }}>Hello, World!</Text>
+  </Canvas>
+</VersoCanvas>

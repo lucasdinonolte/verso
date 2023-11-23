@@ -1,0 +1,14 @@
+{
+  "name": "@verso/playground",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "dev": "verso dev",
+    "render": "verso render"
+  },
+  "dependencies": {
+    "@verso/cli": "*",
+    "@verso/core": "*"
+  }
+}

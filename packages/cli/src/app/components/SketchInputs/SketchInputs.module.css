@@ -1,0 +1,9 @@
+.root > * + * {
+  margin-top: var(--space-m);
+}
+
+.label {
+  display: block;
+  font-size: var(--text-sm);
+  margin-bottom: var(--space-xs);
+}
