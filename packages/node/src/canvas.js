@@ -40,7 +40,7 @@ export const renderToCanvas = registerRenderer({
     /* NOOP */
   },
   transform({ a, b, c, d, tx, ty }, { ctx }) {
-    ctx.transform(a, b, c, d, tx, ty);
+    ctx.get().transform(a, b, c, d, tx, ty);
   },
   moveTo(x, y, { ctx }) {
     ctx.get().moveTo(x, y);
