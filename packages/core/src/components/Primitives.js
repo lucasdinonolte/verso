@@ -1,5 +1,3 @@
-import point from '../point.js';
-
 export const KAPPA = 0.5522847498;
 
 const computePolygonPoints = (radius, count, { x, y }) => {
@@ -8,12 +6,18 @@ const computePolygonPoints = (radius, count, { x, y }) => {
   const points = [];
   for (let i = 0; i < edges; i++) {
     const a = angle * i;
-    points.push(point(x + radius * Math.cos(a), y + radius * Math.sin(a)));
+    points.push({ x: x + radius * Math.cos(a), y: y + radius * Math.sin(a) });
   }
 
   return points;
 };
 
+/**
+ * @param {{ x: number, y: number, width: number, height: number, style: object }}
+ *
+ * @example
+ * <Rectangle x={0} y={0} width={100} height={100} />
+ */
 export const Rectangle = ({ x, y, width, height, style }, renderer) => {
   renderer.beginPath();
   renderer.moveTo(x, y);
@@ -79,7 +83,7 @@ export const Circle = ({ cx, cy, r, ...rest }, renderer) =>
   );
 
 export const Polygon = ({ cx, cy, r, sides, style }, renderer) => {
-  const points = computePolygonPoints(r, sides, point(cx, cy));
+  const points = computePolygonPoints(r, sides, { x: cx, y: cy });
   renderer.beginPath();
   renderer.moveTo(points[0].x, points[0].y);
   points.slice(1).forEach((p) => renderer.lineTo(p.x, p.y));

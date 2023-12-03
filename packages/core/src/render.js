@@ -1,9 +1,5 @@
 import { normalizeChildren } from './utils.js';
-
-const isFragment = (node) =>
-  node.type &&
-  (node.type === Symbol.for('react.fragment') ||
-    node.type === Symbol.for('verso.fragment'));
+import { isFragment } from './jsx.js';
 
 export const renderNodeWithRenderer = (root, renderer) => {
   if (!renderer) throw new Error('No renderer provided');

@@ -14,6 +14,7 @@
     "@verso/node": "0.0.1",
     "@verso/react": "0.0.1",
     "clsx": "^1.2.1",
+    "esbuild": "^0.19.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "sade": "^1.8.1",

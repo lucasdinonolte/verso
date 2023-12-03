@@ -23,7 +23,7 @@ Navbar.SketchSelect = ({ sketches, value, onChange }) => {
     <select className={css.select} value={value} onChange={onChange}>
       {Object.entries(sketches).map(([key, sketch]) => (
         <option key={key} value={key}>
-          {sketch.title ?? 'Untitled Sketch'}
+          {sketch.default?.settings?.title ?? 'Untitled Sketch'}
         </option>
       ))}
     </select>
