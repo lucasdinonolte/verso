@@ -5,11 +5,90 @@ import { hexToBuffer } from '../util/data.js';
 
 import font from '../assets/Apercu Light.otf?raw-hex';
 
-<VersoCanvas fonts={[
-  { name: 'Apercu', data: hexToBuffer(font) },
-]}>
-  <Canvas width={500} height={500} density={2}>
-    <Circle cx={250} cy={250} r={100} style={{ fill: 'blue' }} />
-    <Text x={200} y={200} fontFamily="Apercu" fontSize={40} style={{ fill: 'white' }}>Hello, World!</Text>
-  </Canvas>
-</VersoCanvas>
+Verso is a powerful open source framework for programmatically creating 2D graphics. It’s build around JSX, to feel familiar enough to anyone having worked with web technologies before. It’s modular and render-agnostic approach make it a versatile tool, allowing you to create Posters, Instagram Stories, Business Cards, Projections, Artwork and much more using code.
+
+## Get started
+
+To start working with Verso, you need to create a project. Run the following command in the terminal:
+
+```bash
+npm init verso@latest
+```
+
+This will install the Verso command line interface which will guide you through the setup of your Verso project.
+
+You’ll end up with a base project, containing:
+
+- `README.md` containing basic information on how to run and render your Verso project
+- `package.json` keeping all dependencies needed for your project
+- `verso.config.js` containing your projects configuration
+- `sketches/` is the folder that will contain all your sketches
+
+
+## Sketches
+
+The building blocks of a Verso Project is called a sketch, a project can contain as many sketches as you like. A sketch is JavaScript code that describes 2D graphics using JSX. A sketch can run anywhere JavaScript runs and you have full access to the language’s feature. However to keep it compatible being rendered both in browsers and headlessly (for example using the CLI or on the server) it’s recommended to not rely on any platform-specific JavaScript (like browser APIs) in your sketches.
+
+A sketch is defined by calling `registerSketch` and passing it a function as well as an optional settings object. A sketch function is actually a function that returns a function. This is a performance optimization that helps with animated sketches. Any expensive setup computation will only run once, keeping the frame rendering function as snappy as possible.
+
+```jsx
+const sketch = ({ width = 500, height = 500 }) => {
+  // This will only run once before rendering your sketch
+  // so any expensive computation should be performed here
+  //
+  // The arguments this function receives can be defined
+  // as parameters in the sketch settings.
+
+  // a sketch then returns a frame function, that will be
+  // run for every frame (for animation) or once (for static)
+  // to produce the output
+  return ({ playhead }) => {
+    return (
+      <Canvas width={width} height={height}>
+        <Rectangle
+          x={0}
+          y={0}
+          width={width}
+          height={playhead * height}
+          style={{ fill: 'green' }}
+        />
+      </Canvas>
+    ) 
+  }
+}
+
+// Settings allow you to specify your sketches metadata
+// as well as the dynamic parameters it should take.
+// Parameters can be passed in via the browser UI or as 
+// arguments to the headless renderer.
+const settings = {
+  // Set the name shown in the browser UI
+  title: 'Name to be shown in UI',
+  
+  // For animated sketches you can specify their duration
+  // in seconds here
+  animationDuration: 5,
+
+  // Specify the framerate of an animated sketch, if none
+  // is set it defaults to 60
+  fps: 60,
+
+  // Parameters describe the schema of arguments the sketch
+  // takes. When running in the browser Verso will create
+  // UI inputs for these. When running headlessly you can
+  // pass them to the sketch function directly (either in
+  // code or using CLI arguments).
+  parameters: {
+    width: {
+      type: 'number',
+      default: 500,
+    },
+    height: {
+      type: 'number',
+      default: 500,
+    }
+  }
+}
+
+export default registerSketch(sketch, settings);
+```

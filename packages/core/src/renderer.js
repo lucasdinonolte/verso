@@ -5,7 +5,8 @@ import { renderNodeWithRenderer } from '@verso/core';
  * @property {Function} setup
  * @property {Function} text
  * @property {Function} beginPath
- * @property {Function} endPath
+ * @property {Function} transform
+ * @property {Function} [endPath]
  * @property {Function} moveTo
  * @property {Function} lineTo
  * @property {Function} curveTo
@@ -34,7 +35,7 @@ export const registerRenderer = (
   } = {},
   _options = {}
 ) => {
-  return (root, ...args) => {
+  const renderFn = (root, ...args) => {
     const globals = init(root, ...args);
 
     const withGlobals =
@@ -61,4 +62,8 @@ export const registerRenderer = (
       export: (...args) => _export(...args, globals),
     };
   };
+
+  renderFn.options = _options;
+
+  return renderFn;
 };

@@ -3,30 +3,36 @@ import { join } from 'path';
 import { createServer } from 'vite';
 import react from '@vitejs/plugin-react';
 
+import { getIPAddress } from '../util/network.js';
+import { logger, logServerUrl } from '../util/logger.js';
+
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
-const dev = async () => {
+const dev = async ({ port, sketchDir }) => {
+  logger.info('Starting Dev Server');
   const server = await createServer({
     configFile: false,
     root: join(__dirname, '..', 'app'),
     publicDir: join(__dirname, '..', 'app', 'public'),
     clearScreen: false,
     server: {
-      port: 3000,
+      port,
       host: true,
     },
     plugins: [react()],
     resolve: {
       alias: {
-        '@sketches': join(process.cwd(), 'sketches'),
+        '@sketches': join(process.cwd(), sketchDir),
       },
     },
   });
 
-  console.log('Starting dev server...');
-  console.log('http://localhost:3000');
-
   await server.listen();
+
+  logServerUrl({
+    port: server.config.server.port,
+    ip: getIPAddress(),
+  });
 };
 
 export default dev;

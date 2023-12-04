@@ -2,7 +2,6 @@ import { Group, Canvas, Rectangle, registerSketch } from '@verso/core';
 
 const settings = {
   title: '11-27-2023',
-  animationDuration: 5,
   parameters: {
     background: {
       type: 'color',
@@ -31,8 +30,8 @@ const settings = {
 
 const sketch = registerSketch(
   ({ background, fill, width = 500, height = 500 }) => {
-    return ({ playhead }) => {
-      const t = () => Math.sin(playhead * Math.PI * 2);
+    return () => {
+      const t = () => 0.2;
 
       return (
         <Canvas width={width} height={height} density={2}>

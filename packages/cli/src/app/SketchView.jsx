@@ -49,7 +49,7 @@ export default function SketchView({ sketches }) {
             exporter.current = res.export;
           },
           onDone: () => {
-            if (true) startDrawloop();
+            if (false) startDrawloop();
           },
         });
 

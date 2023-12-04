@@ -91,3 +91,11 @@ export const Polygon = ({ cx, cy, r, sides, style }, renderer) => {
   renderer.endPath();
   renderer.applyStyles(style);
 };
+
+export const Line = ({ from, to, style }, renderer) => {
+  renderer.beginPath();
+  renderer.moveTo(from.x, from.y);
+  renderer.lineTo(to.x, to.y);
+  renderer.endPath();
+  renderer.applyStyles(style);
+};

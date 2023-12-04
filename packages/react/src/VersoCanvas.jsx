@@ -9,7 +9,6 @@ export const VersoCanvas = React.forwardRef(
 
     useEffect(() => {
       if (canvasRef.current) {
-        containerRef.current.replaceChildren();
         renderToCanvas(children, canvasRef.current, {
           width,
           height,
