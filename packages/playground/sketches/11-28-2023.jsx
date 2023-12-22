@@ -1,4 +1,10 @@
-import { Group, Canvas, Rectangle, registerSketch } from '@verso/core';
+import {
+  Canvas,
+  Line,
+  Path,
+  registerSketch,
+  createEllipsePath,
+} from '@verso/core';
 
 const settings = {
   title: '11-27-2023',
@@ -25,40 +31,43 @@ const settings = {
       max: 1000,
       step: 1,
     },
+    center: {
+      type: 'interactive',
+      default: { x: 0, y: 0 },
+      onMouseDown: (e) => ({
+        x: e.clientX,
+        y: e.clientY,
+      }),
+    },
   },
+  animationDuration: 5,
 };
 
 const sketch = registerSketch(
-  ({ background, fill, width = 500, height = 500 }) => {
-    return () => {
-      const t = () => 0.2;
+  ({ background, fill, width = 500, height = 500, center }) => {
+    const path = createEllipsePath({
+      cx: width / 2,
+      cy: height / 2,
+      rx: 200,
+      ry: 100,
+    });
+
+    return ({ playhead }) => {
+      const t = Math.sin(playhead * Math.PI * 2) * 0.5 + 0.5;
+      const p1 = path.getPointAt(t);
+      const p2 = path.getNormalAt(t);
+
+      const from = p1.add(p2.multiply(20));
+      const to = p1.add(p2.multiply(-20));
 
       return (
         <Canvas width={width} height={height} density={2}>
-          <Group
-            transform={{
-              rotate: t() * 90,
-              scale: { x: 0.5 * t() + 0.5, y: 0.5 * t() + 0.5 },
-              shear: { x: t() * 1, y: 1 },
-              origin: { x: width / 2, y: height / 2 },
-            }}
-            style={{ fill: fill }}
-          >
-            <Rectangle
-              x={0}
-              y={0}
-              width={width}
-              height={height}
-              style={{ fill: background }}
-            />
-
-            <Rectangle
-              x={width / 4}
-              y={height / 4}
-              width={width / 2}
-              height={height / 2}
-            />
-          </Group>
+          <Path path={path} style={{ fill }} />
+          <Line
+            from={from}
+            to={to}
+            style={{ stroke: 'red', strokeWidth: 10 }}
+          />
         </Canvas>
       );
     };

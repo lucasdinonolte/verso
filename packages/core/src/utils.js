@@ -29,3 +29,19 @@ export const omit = (obj, names) => {
   }
   return result;
 };
+
+/**
+ * Transforms radians to degrees.
+ *
+ * @param {number} radians}
+ * @returns {number}
+ */
+export const radiansToDegrees = (radians) => (radians * 180) / Math.PI;
+
+/**
+ * Transforms degrees to radians.
+ *
+ * @param {number} degrees
+ * @returns {number}
+ */
+export const degreesToRadians = (degrees) => (degrees * Math.PI) / 180;

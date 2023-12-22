@@ -1,29 +1,28 @@
-import { parseSVGPath } from '../path.js';
+import createPath from '../path.js';
 
 export const Path = ({ path, style }, renderer) => {
-  const parsedPath = parseSVGPath(path);
+  const isPathObject = path.type === 'path';
+  const parsedPath = isPathObject ? path : createPath(path);
+
   renderer.beginPath();
 
-  parsedPath.forEach(({ key, data }) => {
-    switch (key) {
-      case 'M': {
+  parsedPath.toInstructions().forEach(({ type, data }) => {
+    switch (type) {
+      case 'moveTo': {
         renderer.moveTo(...data);
         break;
       }
-      case 'L': {
+      case 'lineTo': {
         renderer.lineTo(...data);
         break;
       }
-      case 'C': {
+      case 'curveTo': {
         renderer.curveTo(...data);
         break;
       }
-      case 'Z': {
+      case 'close': {
         renderer.close();
         break;
-      }
-      default: {
-        throw new Error(`Unknown path command ${key}`);
       }
     }
   });

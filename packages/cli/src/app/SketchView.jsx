@@ -48,14 +48,34 @@ export default function SketchView({ sketches }) {
             );
             exporter.current = res.export;
           },
-          onDone: () => {
-            if (false) startDrawloop();
-          },
         });
 
       startDrawloop();
     }
   }, [ref, setup, inputs]);
+
+  const mouseDownInputs = Object.entries(parameters).reduce((acc, cur) => {
+    const [key, value] = cur;
+    if (value.type === 'interactive' && typeof value.onMouseDown === 'function')
+      acc[key] = value;
+    return acc;
+  }, {});
+
+  const handleCanvasMousedown = (e) => {
+    const mouseDownValues = Object.entries(mouseDownInputs).reduce(
+      (acc, cur) => {
+        const [key, value] = cur;
+        acc[key] = { ...value, value: value.onMouseDown(e) };
+        return acc;
+      },
+      {}
+    );
+
+    setInputs((prev) => ({
+      ...prev,
+      ...mouseDownValues,
+    }));
+  };
 
   return (
     <div>
@@ -85,7 +105,7 @@ export default function SketchView({ sketches }) {
       </Navbar>
       {setup && (
         <SketchContainer>
-          <canvas ref={ref} />
+          <canvas ref={ref} onMouseDown={handleCanvasMousedown} />
         </SketchContainer>
       )}
     </div>

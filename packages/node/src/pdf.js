@@ -1,11 +1,6 @@
 import PDFDocument from 'pdfkit';
 
-import {
-  appendTransformationMatrix,
-  identityMatrix,
-  isIdentityMatrix,
-  registerRenderer,
-} from '@verso/core';
+import { registerRenderer } from '@verso/core';
 
 import WritableBufferStream from './util/bufferStream.js';
 import { parseFonts } from './util/fonts.js';
