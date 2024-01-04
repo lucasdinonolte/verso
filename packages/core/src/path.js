@@ -3,12 +3,18 @@ import createCurve from './curve.js';
 import createPoint from './point.js';
 import { parseSVGPath } from './svgPath.js';
 
-const KAPPA = 0.5522847498;
+export const KAPPA = 0.5522847498;
 
 /**
  * @typedef {Object} Path
  * @property {"path"} type
  * @property {Anchor[]} anchors
+ */
+
+/**
+ * @typedef {Object} CompoundPath
+ * @property {"compoundPath"} type
+ * @property {Path[]} paths
  */
 
 /**
@@ -83,6 +89,11 @@ const computeCurves = (anchors, closed) => {
 
   return res;
 };
+
+const makeCompoundPath = (anchors) => ({
+  type: 'compoundPath',
+  paths: anchors.map(({ anchors, closed }) => makePath(anchors, closed)),
+});
 
 const makePath = (anchors, closed) => {
   const curves = computeCurves(anchors, closed);
@@ -200,50 +211,94 @@ export const createEllipsePath = ({ cx, cy, rx, ry }) => {
 export const createCirclePath = ({ cx, cy, r }) =>
   createEllipsePath({ cx, cy, rx: r, ry: r });
 
+export const createLinePath = ({ from, to }) => {
+  return createPath(moveTo(from.x, from.y), lineTo(to.x, to.y));
+};
+
+export const createPolygonPath = ({ cx, cy, r, sides }) => {
+  const edges = Math.max(sides, 3);
+  const angle = (Math.PI * 2) / edges;
+  const points = [];
+  for (let i = 0; i < edges; i++) {
+    const a = angle * i;
+    points.push({ x: cx + r * Math.cos(a), y: cy + r * Math.sin(a) });
+  }
+
+  return createPath(
+    moveTo(points[0].x, points[0].y),
+    ...points.slice(1).map((p) => lineTo(p.x, p.y)),
+    close()
+  );
+};
+
 /**
  * Creates a new path.
  *
  * @param {string|Array} path
- * @returns {Path}
+ * @returns {Path|Path[]}
  */
 const createPath = (...args) => {
   const hasSVGPath = typeof args[0] === 'string';
   const commands = hasSVGPath ? parseSVGPath(args[0]) : args;
 
-  let closed = false;
+  let lastI = 0;
 
-  const anchors = commands.reduce((acc, command) => {
-    let item;
-    switch (command.type) {
-      case 'moveTo': {
-        const point = createPoint(...command.data);
-        item = createAnchor(point, null, null);
-        return [...acc, item];
-      }
-      case 'lineTo': {
-        const point = createPoint(...command.data);
-        item = createAnchor(point, null, null);
-        return [...acc, item];
-      }
-      case 'curveTo': {
-        const [x1, y1, x2, y2, x3, y3] = command.data;
-        const point = createPoint(x3, y3),
-          handleOut = createPoint(x1, y1),
-          handleIn = createPoint(x2, y2);
+  // Split commands into subpaths by finding close commands.
+  const subpaths = [];
 
-        acc[acc.length - 1].handleOut = handleOut;
-        item = createAnchor(point, handleIn, null);
-
-        return [...acc, item];
-      }
-      case 'close': {
-        closed = true;
-        return acc;
-      }
+  commands.forEach((command, i) => {
+    if (command.type === 'close') {
+      subpaths.push(commands.slice(lastI, i + 1));
+      lastI = i + 1;
     }
-  }, []);
+  });
 
-  return makePath(anchors, closed);
+  const anchors = subpaths.map((commands) => {
+    let closed = false;
+    const anchors = commands.reduce((acc, command) => {
+      let item;
+      switch (command.type) {
+        case 'moveTo': {
+          const point = createPoint(...command.data);
+          item = createAnchor(point, null, null);
+          return [...acc, item];
+        }
+        case 'lineTo': {
+          const point = createPoint(...command.data);
+          item = createAnchor(point, null, null);
+          return [...acc, item];
+        }
+        case 'curveTo': {
+          const [x1, y1, x2, y2, x3, y3] = command.data;
+          const point = createPoint(x3, y3),
+            handleOut = createPoint(x1, y1),
+            handleIn = createPoint(x2, y2);
+
+          acc[acc.length - 1].handleOut = handleOut;
+          item = createAnchor(point, handleIn, null);
+
+          return [...acc, item];
+        }
+        case 'close': {
+          closed = true;
+          return acc;
+        }
+      }
+    }, []);
+
+    return {
+      anchors,
+      closed,
+    };
+  });
+
+  if (anchors.length > 1) {
+    return makeCompoundPath(anchors);
+  }
+
+  if (anchors.length === 1) {
+    return makePath(anchors[0].anchors, anchors[0].closed);
+  }
 };
 
 export default createPath;

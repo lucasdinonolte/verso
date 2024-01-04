@@ -8,6 +8,8 @@
 export const DEFAULT_SETTINGS = {
   animationDuration: 0,
   fps: 60,
+  bitRate: null,
+  keyFramesPerSecond: null,
   parameters: {},
 };
 

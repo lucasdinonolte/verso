@@ -3,6 +3,7 @@ import { isFragment } from './jsx.js';
 
 export const renderNodeWithRenderer = (root, renderer) => {
   if (!renderer) throw new Error('No renderer provided');
+  if (root === null || root === undefined) return;
 
   const { type, props } = root;
 

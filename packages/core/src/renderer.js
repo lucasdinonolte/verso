@@ -3,7 +3,7 @@ import { renderNodeWithRenderer } from '@verso/core';
 /**
  * @typedef {Object} Renderer
  * @property {Function} setup
- * @property {Function} text
+ * @property {Function|undefined} text
  * @property {Function} beginPath
  * @property {Function} transform
  * @property {Function} [endPath]
@@ -12,6 +12,7 @@ import { renderNodeWithRenderer } from '@verso/core';
  * @property {Function} curveTo
  * @property {Function} close
  * @property {Function} applyStyles
+ * @property {Function} image
  * @property {Function} export
  */
 
@@ -21,11 +22,12 @@ import { renderNodeWithRenderer } from '@verso/core';
 export const registerRenderer = (
   {
     init = () => { },
+    image = () => { },
     setup = () => { },
-    text = () => { },
+    text = undefined,
     transform = () => { },
     beginPath = () => { },
-    endPath = () => { },
+    endPath = undefined,
     moveTo = () => { },
     lineTo = () => { },
     curveTo = () => { },
@@ -38,10 +40,10 @@ export const registerRenderer = (
   const renderFn = (root, ...args) => {
     const globals = init(root, ...args);
 
-    const withGlobals =
-      (fn) =>
-        (...args) =>
-          fn(...args, globals);
+    const withGlobals = (fn) => {
+      if (typeof fn === 'undefined') return undefined;
+      return (...args) => fn(...args, globals);
+    };
 
     const renderer = {
       setup: withGlobals(setup),
@@ -53,6 +55,7 @@ export const registerRenderer = (
       lineTo: withGlobals(lineTo),
       curveTo: withGlobals(curveTo),
       close: withGlobals(close),
+      image: withGlobals(image),
       applyStyles: withGlobals(applyStyles),
     };
 

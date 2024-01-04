@@ -1,2 +1,1 @@
-export { VersoCanvas } from './VersoCanvas.jsx';
-export { VersoSVG } from './VersoSVG.jsx';
+export { Verso } from './Verso.jsx';

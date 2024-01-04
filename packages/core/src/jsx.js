@@ -26,3 +26,11 @@ export const isFragment = (node) =>
   node.type &&
   (node.type === Symbol.for('react.fragment') ||
     node.type === Symbol.for('verso.fragment'));
+
+/**
+ * A wrap function to convert JSX components into function calls.
+ */
+export const wrapComponentToFunction =
+  (component) =>
+    (props, ...children) =>
+      h(component, props, ...children);

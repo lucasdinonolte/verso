@@ -154,7 +154,7 @@ export const invertTransformationMatrix = (matrix) => {
   return {
     a: d / determinant,
     b: -b / determinant,
-    c: -b / determinant,
+    c: -c / determinant,
     d: a / determinant,
     tx: (c * ty - d * tx) / determinant,
     ty: (b * tx - a * ty) / determinant,
@@ -191,7 +191,7 @@ export const isIdentityMatrix = (transform) => {
  * Parses scale transforms from props. Accepting both a single
  * number and explicit x and y values.
  */
-const parseScale = ({ scale }) => {
+const parseScale = ({ scale } = {}) => {
   if (typeof scale === 'number') return { x: scale, y: scale };
   return {
     x: scale?.x ?? 1,
@@ -204,7 +204,7 @@ const parseScale = ({ scale }) => {
  * numbers for `translateX`and `translateY` as well as an object
  * holding `x` and `y` values.
  */
-const parseTranslate = ({ translate, translateX, translateY }) => {
+const parseTranslate = ({ translate, translateX, translateY } = {}) => {
   if (translate)
     return {
       x: translate?.x ?? 0,
@@ -221,7 +221,7 @@ const parseTranslate = ({ translate, translateX, translateY }) => {
  * Parses a rotate value. Expects value to be given as a single
  * number representing the angle in degrees.
  */
-const parseRotate = ({ rotate }) => {
+const parseRotate = ({ rotate } = {}) => {
   return rotate ?? 0;
 };
 
@@ -230,7 +230,7 @@ const parseRotate = ({ rotate }) => {
  * numbers for `shearX` and `shearY` as well as an object holding
  * `x` and `y` values.
  */
-const parseShear = ({ shear, shearX, shearY }) => {
+const parseShear = ({ shear, shearX, shearY } = {}) => {
   if (shear) {
     return {
       x: shear?.x ?? 0,
@@ -247,7 +247,7 @@ const parseShear = ({ shear, shearX, shearY }) => {
 /**
  * Parses the transform origin from props.
  */
-const parseOrigin = ({ origin }) => {
+const parseOrigin = ({ origin } = {}) => {
   return {
     x: origin?.x ?? 0,
     y: origin?.y ?? 0,
